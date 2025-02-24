@@ -7,41 +7,75 @@
 
 import UIKit
 import SnapKit
+import RxSwift
+import RxCocoa
 
 final class LotteryViewController: UIViewController {
     
-    let pickerTextField = UITextField()
-    let pickerView = UIPickerView()
-    let infoLabel = UILabel()
-    let dateLabel = UILabel()
-    let dividerView = UIView()
-    let resultLabel = UILabel()
-    let ObservableNetworkingButton = UIButton()
-    let SingleNetworkingButton = UIButton()
-    let plusLabel = UILabel()
-    let bonusLabel = UILabel()
-    var pickerItems: [Int] = Array(1...1154)
+    private let viewModel = LotteryViewModel()
+    private let disposeBag = DisposeBag()
     
-    let firstNumLabel = UILabel()
-    let secondNumLabel = UILabel()
-    let thirdNumLabel = UILabel()
-    let fourthNumLabel = UILabel()
-    let fifthNumLabel = UILabel()
-    let sixthNumLabel = UILabel()
-    let bonusNumLabel = UILabel()
+    private let pickerTextField = UITextField()
+    private let pickerView = UIPickerView()
+    private let infoLabel = UILabel()
+    private let dateLabel = UILabel()
+    private let dividerView = UIView()
+    private let resultLabel = UILabel()
+    private let ObservableNetworkingButton = UIButton()
+    private let SingleNetworkingButton = UIButton()
+    private let plusLabel = UILabel()
+    private let bonusLabel = UILabel()
+    private var pickerItems: [Int] = Array(1...1154)
     
-    lazy var labelList = [firstNumLabel, secondNumLabel, thirdNumLabel, fourthNumLabel, fifthNumLabel, sixthNumLabel, bonusNumLabel]
+    private let firstNumLabel = UILabel()
+    private let secondNumLabel = UILabel()
+    private let thirdNumLabel = UILabel()
+    private let fourthNumLabel = UILabel()
+    private let fifthNumLabel = UILabel()
+    private let sixthNumLabel = UILabel()
+    private let bonusNumLabel = UILabel()
+    
+    private lazy var labelList = [firstNumLabel, secondNumLabel, thirdNumLabel, fourthNumLabel, fifthNumLabel, sixthNumLabel, bonusNumLabel]
 
     override func viewDidLoad() {
         super.viewDidLoad()
         configureHierarchy()
         configureLayout()
         configureView()
+        bind()
         
         pickerTextFieldConfig()
     }
+    
+    private func bind() {
+        let input = LotteryViewModel.Input()
+        let output = viewModel.transform(input: input)
+        
+        
+    }
 
-    func configureHierarchy() {
+    @objc
+    private func observableNetworkingButtonTapped() {
+        // Observable로 네트워킹
+        print(#function)
+    }
+    
+    @objc
+    private func singleNetworkingButtonTapped() {
+        // Single로 네트워킹
+        print(#function)
+    }
+    
+    private func pickerTextFieldConfig() {
+        pickerTextField.inputView = pickerView
+        pickerView.delegate = self
+        pickerView.dataSource = self
+    }
+}
+
+// MARK: - Design
+extension LotteryViewController {
+    private func configureHierarchy() {
         view.addSubview(pickerTextField)
         view.addSubview(infoLabel)
         view.addSubview(dateLabel)
@@ -54,7 +88,7 @@ final class LotteryViewController: UIViewController {
         }
     }
     
-    func configureLayout() {
+    private func configureLayout() {
         pickerTextField.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.horizontalEdges.equalTo(view).inset(24)
@@ -128,7 +162,7 @@ final class LotteryViewController: UIViewController {
         }
     }
     
-    func configureView() {
+    private func configureView() {
         view.backgroundColor = .white
         
         pickerTextField.textAlignment = .center
@@ -170,32 +204,7 @@ final class LotteryViewController: UIViewController {
         SingleNetworkingButton.addTarget(self, action: #selector(singleNetworkingButtonTapped), for: .touchUpInside)
     }
     
-    @objc
-    func observableNetworkingButtonTapped() {
-        // Observable로 네트워킹
-        print(#function)
-    }
-    
-    @objc
-    func singleNetworkingButtonTapped() {
-        // Single로 네트워킹
-        print(#function)
-    }
-    
-    func numberBackground(_ number: Int) -> UIColor {
-        switch number {
-        case 1...10:
-            return .lotteryYellow
-        case 11...20:
-            return .lotteryBlue
-        case 21...30:
-            return .lotteryRed
-        default:
-            return .lotteryGray
-        }
-    }
-    
-    func numberLayout(_ currentLabel: UILabel, from: UILabel) {
+    private func numberLayout(_ currentLabel: UILabel, from: UILabel) {
         currentLabel.snp.makeConstraints { make in
             make.centerY.equalTo(from.snp.centerY)
             make.leading.equalTo(from.snp.trailing).offset(8)
@@ -203,7 +212,7 @@ final class LotteryViewController: UIViewController {
         }
     }
     
-    func numberDesign(_ label: UILabel, number: Int) {
+    private func numberDesign(_ label: UILabel, number: Int) {
         label.text = "\(number)"
         label.font = .systemFont(ofSize: 17, weight: .semibold)
         label.textAlignment = .center
@@ -215,13 +224,21 @@ final class LotteryViewController: UIViewController {
         }
     }
     
-    func pickerTextFieldConfig() {
-        pickerTextField.inputView = pickerView
-        pickerView.delegate = self
-        pickerView.dataSource = self
+    private func numberBackground(_ number: Int) -> UIColor {
+        switch number {
+        case 1...10:
+            return .lotteryYellow
+        case 11...20:
+            return .lotteryBlue
+        case 21...30:
+            return .lotteryRed
+        default:
+            return .lotteryGray
+        }
     }
 }
 
+// MARK: - PickerDelegate
 extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
         return pickerItems.count
