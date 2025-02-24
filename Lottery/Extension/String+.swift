@@ -15,4 +15,11 @@ extension String {
         
         return attributeString
     }
+    
+    func toDate() -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "ko_kr")
+        dateFormatter.dateFormat = "yyyyMMdd"
+        return dateFormatter.date(from: self)
+    }
 }

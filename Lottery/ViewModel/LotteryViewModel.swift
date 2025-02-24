@@ -42,7 +42,7 @@ final class LotteryViewModel {
         let lotteryData = PublishSubject<Lottery>()
         
         // 초기값 (가장 최근 회차)
-        NetworkManager.shared.callLotteryAPIWithObservable(drwNo: "1160")
+        NetworkManager.shared.callLotteryAPIWithObservable(drwNo: calculateLatestDrwNo())
             .subscribe(with: self) { owner, data in
                 lotteryData.onNext(data)
             } onError: { owner, error in
@@ -54,7 +54,6 @@ final class LotteryViewModel {
             }
             .disposed(by: disposeBag)
 
-        
         input.pickerModelSelected
             .asDriver()
             .drive(with: self) { owner, array in
@@ -84,7 +83,6 @@ final class LotteryViewModel {
                 print("onDisposed")
             }
             .disposed(by: disposeBag)
-
         
         input.singleNetworkingButton
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
@@ -114,8 +112,16 @@ final class LotteryViewModel {
         )
     }
     
-    // TODO: 최신 회차를 계산하는 로직
-//    private func calculateLatestDrwNo() -> String {
-//        
-//    }
+    // 최신 회차를 계산하는 로직
+    private func calculateLatestDrwNo() -> String {
+        let today = Date()
+        let startDate = "20021207".toDate() ?? Date()
+        
+        let interval = today.timeIntervalSince(startDate)
+        let dateDifference = Int(interval / 86400)
+        let week = dateDifference / 7
+        let latestDrwNo = String(week + 1)
+        
+        return latestDrwNo
+    }
 }
