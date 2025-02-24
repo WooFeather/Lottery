@@ -21,8 +21,8 @@ final class LotteryViewController: UIViewController {
     private let dateLabel = UILabel()
     private let dividerView = UIView()
     private let resultLabel = UILabel()
-    private let ObservableNetworkingButton = UIButton()
-    private let SingleNetworkingButton = UIButton()
+    private let observableNetworkingButton = UIButton()
+    private let singleNetworkingButton = UIButton()
     private let plusLabel = UILabel()
     private let bonusLabel = UILabel()
     
@@ -50,7 +50,9 @@ final class LotteryViewController: UIViewController {
     
     private func bind() {
         let input = LotteryViewModel.Input(
-            pickerModelSelected: pickerView.rx.modelSelected(Int.self)
+            pickerModelSelected: pickerView.rx.modelSelected(Int.self),
+            observableButtonTapped: observableNetworkingButton.rx.tap,
+            singleNetworkingButton: singleNetworkingButton.rx.tap
         )
         let output = viewModel.transform(input: input)
         
@@ -62,28 +64,27 @@ final class LotteryViewController: UIViewController {
             .disposed(by: disposeBag)
         
         output.pickedItem
-            .asDriver(onErrorJustReturn: "")
             .drive(pickerTextField.rx.text)
             .disposed(by: disposeBag)
             
-    }
-
-    @objc
-    private func observableNetworkingButtonTapped() {
-        // Observable로 네트워킹
-        print(#function)
-    }
-    
-    @objc
-    private func singleNetworkingButtonTapped() {
-        // Single로 네트워킹
-        print(#function)
+        output.lotteryData
+            .bind(with: self) { owner, data in
+                dump(data)
+                
+                let labelList = [owner.firstNumLabel: data.drwtNo1, owner.secondNumLabel: data.drwtNo2, owner.thirdNumLabel: data.drwtNo3, owner.fourthNumLabel: data.drwtNo4, owner.fifthNumLabel: data.drwtNo5, owner.sixthNumLabel: data.drwtNo6, owner.bonusNumLabel: data.bnusNo]
+                
+                owner.dateLabel.text = "\(data.drwNoDate) 추첨"
+                owner.resultLabel.text = "\(data.drwNo)회 당첨결과"
+                owner.resultLabel.attributedText = owner.resultLabel.text?.resultLabelTextAttribute()
+                for item in labelList {
+                    owner.numberDesign(item.key, number: item.value)
+                }
+            }
+            .disposed(by: disposeBag)
     }
     
     private func pickerTextFieldConfig() {
         pickerTextField.inputView = pickerView
-//        pickerView.delegate = self
-//        pickerView.dataSource = self
     }
 }
 
@@ -95,8 +96,8 @@ extension LotteryViewController {
         view.addSubview(dateLabel)
         view.addSubview(dividerView)
         view.addSubview(resultLabel)
-        view.addSubview(ObservableNetworkingButton)
-        view.addSubview(SingleNetworkingButton)
+        view.addSubview(observableNetworkingButton)
+        view.addSubview(singleNetworkingButton)
         [firstNumLabel, secondNumLabel, thirdNumLabel, fourthNumLabel, fifthNumLabel, sixthNumLabel, bonusNumLabel, plusLabel, bonusLabel].forEach {
             view.addSubview($0)
         }
@@ -161,14 +162,14 @@ extension LotteryViewController {
             make.centerX.equalTo(bonusNumLabel.snp.centerX)
         }
         
-        ObservableNetworkingButton.snp.makeConstraints { make in
+        observableNetworkingButton.snp.makeConstraints { make in
             make.top.equalTo(bonusLabel.snp.bottom).offset(50)
             make.leading.equalToSuperview().offset(20)
             make.width.equalTo(200)
             make.height.equalTo(50)
         }
         
-        SingleNetworkingButton.snp.makeConstraints { make in
+        singleNetworkingButton.snp.makeConstraints { make in
             make.top.equalTo(bonusLabel.snp.bottom).offset(50)
             make.trailing.equalToSuperview().offset(-20)
             make.width.equalTo(200)
@@ -209,13 +210,11 @@ extension LotteryViewController {
         bonusLabel.font = .systemFont(ofSize: 12)
         bonusLabel.textColor = .gray
         
-        ObservableNetworkingButton.setTitle("Observable", for: .normal)
-        ObservableNetworkingButton.setTitleColor(.systemBlue, for: .normal)
-        ObservableNetworkingButton.addTarget(self, action: #selector(observableNetworkingButtonTapped), for: .touchUpInside)
+        observableNetworkingButton.setTitle("Observable", for: .normal)
+        observableNetworkingButton.setTitleColor(.systemBlue, for: .normal)
         
-        SingleNetworkingButton.setTitle("Single", for: .normal)
-        SingleNetworkingButton.setTitleColor(.systemBlue, for: .normal)
-        SingleNetworkingButton.addTarget(self, action: #selector(singleNetworkingButtonTapped), for: .touchUpInside)
+        singleNetworkingButton.setTitle("Single", for: .normal)
+        singleNetworkingButton.setTitleColor(.systemBlue, for: .normal)
     }
     
     private func numberLayout(_ currentLabel: UILabel, from: UILabel) {
