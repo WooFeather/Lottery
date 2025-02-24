@@ -25,7 +25,6 @@ final class LotteryViewController: UIViewController {
     private let SingleNetworkingButton = UIButton()
     private let plusLabel = UILabel()
     private let bonusLabel = UILabel()
-    private var pickerItems: [Int] = Array(1...1154)
     
     private let firstNumLabel = UILabel()
     private let secondNumLabel = UILabel()
@@ -45,13 +44,28 @@ final class LotteryViewController: UIViewController {
         bind()
         
         pickerTextFieldConfig()
+        
+        // TODO: 네트워크 통신 - 가장 최근 회차 조회
     }
     
     private func bind() {
-        let input = LotteryViewModel.Input()
+        let input = LotteryViewModel.Input(
+            pickerModelSelected: pickerView.rx.modelSelected(Int.self)
+        )
         let output = viewModel.transform(input: input)
         
+        output.pickerItems
+            .map { $0.reversed() }
+            .bind(to: pickerView.rx.itemTitles) { _, item in
+                return String(item)
+            }
+            .disposed(by: disposeBag)
         
+        output.pickedItem
+            .asDriver(onErrorJustReturn: "")
+            .drive(pickerTextField.rx.text)
+            .disposed(by: disposeBag)
+            
     }
 
     @objc
@@ -68,8 +82,8 @@ final class LotteryViewController: UIViewController {
     
     private func pickerTextFieldConfig() {
         pickerTextField.inputView = pickerView
-        pickerView.delegate = self
-        pickerView.dataSource = self
+//        pickerView.delegate = self
+//        pickerView.dataSource = self
     }
 }
 
@@ -239,24 +253,24 @@ extension LotteryViewController {
 }
 
 // MARK: - PickerDelegate
-extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
-    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        return pickerItems.count
-    }
-    
-    func numberOfComponents(in pickerView: UIPickerView) -> Int {
-        return 1
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        let rowItem = pickerItems.reversed()[row]
-        return String(rowItem)
-    }
-    
-    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        let rowItem = pickerItems.reversed()[row]
-        pickerTextField.text = "\(rowItem)회"
-        
+//extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
+//    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+//        return pickerItems.count
+//    }
+//    
+//    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+//        return 1
+//    }
+//    
+//    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+//        let rowItem = pickerItems.reversed()[row]
+//        return String(rowItem)
+//    }
+//    
+//    func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
+//        let rowItem = pickerItems.reversed()[row]
+//        pickerTextField.text = "\(rowItem)회"
+//        
 //        let url = "https://www.dhlottery.co.kr/common.do?method=getLottoNumber&drwNo=\(rowItem)"
 //        AF.request(url, method: .get).responseDecodable(of: Lottery.self) { [self] response in
 //            switch response.result {
@@ -274,5 +288,5 @@ extension LotteryViewController: UIPickerViewDelegate, UIPickerViewDataSource {
 //                print(error)
 //            }
 //        }
-    }
-}
+//    }
+//}
