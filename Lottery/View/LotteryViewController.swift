@@ -44,8 +44,6 @@ final class LotteryViewController: UIViewController {
         bind()
         
         pickerTextFieldConfig()
-        
-        // TODO: 네트워크 통신 - 가장 최근 회차 조회
     }
     
     private func bind() {
@@ -68,7 +66,7 @@ final class LotteryViewController: UIViewController {
             .disposed(by: disposeBag)
             
         output.lotteryData
-            .bind(with: self) { owner, data in
+            .drive(with: self) { owner, data in
                 dump(data)
                 
                 let labelList = [owner.firstNumLabel: data.drwtNo1, owner.secondNumLabel: data.drwtNo2, owner.thirdNumLabel: data.drwtNo3, owner.fourthNumLabel: data.drwtNo4, owner.fifthNumLabel: data.drwtNo5, owner.sixthNumLabel: data.drwtNo6, owner.bonusNumLabel: data.bnusNo]

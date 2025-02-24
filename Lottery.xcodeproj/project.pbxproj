@@ -10,6 +10,7 @@
 		79C7D6832D6C4525004A464A /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 79C7D6822D6C4525004A464A /* SnapKit */; };
 		79C7D6862D6C4538004A464A /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 79C7D6852D6C4538004A464A /* RxCocoa */; };
 		79C7D6882D6C4538004A464A /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 79C7D6872D6C4538004A464A /* RxSwift */; };
+		79C7D71F2D6C947E004A464A /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 79C7D71E2D6C947E004A464A /* Alamofire */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				79C7D6882D6C4538004A464A /* RxSwift in Frameworks */,
+				79C7D71F2D6C947E004A464A /* Alamofire in Frameworks */,
 				79C7D6862D6C4538004A464A /* RxCocoa in Frameworks */,
 				79C7D6832D6C4525004A464A /* SnapKit in Frameworks */,
 			);
@@ -90,6 +92,7 @@
 				79C7D6822D6C4525004A464A /* SnapKit */,
 				79C7D6852D6C4538004A464A /* RxCocoa */,
 				79C7D6872D6C4538004A464A /* RxSwift */,
+				79C7D71E2D6C947E004A464A /* Alamofire */,
 			);
 			productName = Lottery;
 			productReference = 79C7D6672D6C43AF004A464A /* Lottery.app */;
@@ -122,6 +125,7 @@
 			packageReferences = (
 				79C7D6812D6C4525004A464A /* XCRemoteSwiftPackageReference "SnapKit" */,
 				79C7D6842D6C4538004A464A /* XCRemoteSwiftPackageReference "RxSwift" */,
+				79C7D71D2D6C947E004A464A /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 79C7D6682D6C43AF004A464A /* Products */;
@@ -377,6 +381,14 @@
 				minimumVersion = 6.9.0;
 			};
 		};
+		79C7D71D2D6C947E004A464A /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -394,6 +406,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 79C7D6842D6C4538004A464A /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxSwift;
+		};
+		79C7D71E2D6C947E004A464A /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79C7D71D2D6C947E004A464A /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
